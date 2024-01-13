@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const mysql = require('mysql2'); // Change this line
+const db = require('./db'); // Import the database connection module
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -8,63 +8,45 @@ const PORT = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json());
 
-// MySQL Database Connection
-const db = mysql.createConnection({
-  host: 'emplyee-info.cn882w80iku6.us-east-1.rds.amazonaws.com', // Replace with your RDS endpoint
-  user: 'ridhiman',
-  password: 'bunny1996',
-  database: 'emplyee-info',
-});
-
-db.connect((err) => {
-  if (err) {
-    console.error('Error connecting to MySQL:', err);
-  } else {
-    console.log('Connected to MySQL database');
-  }
-});
-
 // CRUD Operations
 
 // Example: Get all items
-app.get('/api/items', (req, res) => {
-  const sql = 'SELECT * FROM items';
-  db.query(sql, (err, result) => {
-    if (err) {
-      res.status(500).json({ error: err.message });
-      return;
-    }
-    res.json(result);
-  });
+app.get('/api/items', async (req, res) => {
+  try {
+    const [rows] = await db.query('SELECT * FROM items');
+    res.json(rows);
+  } catch (error) {
+    console.error('Error fetching items:', error.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
 });
 
 // Example: Add new item
-app.post('/api/items', (req, res) => {
+app.post('/api/items', async (req, res) => {
   const { name } = req.body;
-  const sql = 'INSERT INTO items (name) VALUES (?)';
-  db.query(sql, [name], (err, result) => {
-    if (err) {
-      res.status(500).json({ error: err.message });
-      return;
-    }
+  try {
+    const [result] = await db.execute('INSERT INTO items (name) VALUES (?)', [name]);
     res.json({ id: result.insertId });
-  });
+  } catch (error) {
+    console.error('Error inserting item:', error.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
 });
 
 // Example: Delete an item
-app.delete('/api/items/:id', (req, res) => {
+app.delete('/api/items/:id', async (req, res) => {
   const id = req.params.id;
-  const sql = 'DELETE FROM items WHERE id = ?';
-  db.query(sql, [id], (err, result) => {
-    if (err) {
-      res.status(500).json({ error: err.message });
-      return;
-    }
+  try {
+    const [result] = await db.execute('DELETE FROM items WHERE id = ?', [id]);
     res.json({ success: true });
-  });
+  } catch (error) {
+    console.error('Error deleting item:', error.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
 });
 
 // Start the server
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
+
