@@ -28,7 +28,7 @@ const AddEmployeeForm = ({ refreshTable }) => {
     }
 
     // Send a POST request to add a new employee
-    axios.post('http://localhost:3001/api/employees', formData)
+    axios.post('http://3.94.100.136:3001/api/employees', formData)
       .then(() => {
         // Refresh the table after adding a new employee
         refreshTable();
