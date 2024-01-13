@@ -1,0 +1,18 @@
+{
+  "name": "fullstack-application",
+  "version": "1.0.0",
+  "description": "Deploying full stack application on aws using rds",
+  "main": "index.js",
+  "scripts": {
+    "start": "concurrently \"npm run start-backend\" \"npm run start-frontend\"",
+    "start-backend": "node backend/index.js",
+    "start-frontend": "cd frontend && npm start"
+  }
+  ,
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
