@@ -6,14 +6,14 @@ const EmployeeTable = () => {
 
   useEffect(() => {
     // Fetch data from your backend when the component mounts
-    axios.get('http://3.94.100.136:3001/api/employees')
+    axios.get('http://54.234.85.114:3001/api/employees')
       .then(response => setEmployees(response.data))
       .catch(error => console.error('Error fetching employees:', error.message));
   }, []);
 
   const handleDelete = (id) => {
     // Send a DELETE request to remove the employee
-    axios.delete(`http://3.94.100.136:3001/api/employees/${id}`)
+    axios.delete(`http://54.234.85.114:3001/api/employees/${id}`)
       .then(() => {
         // Refresh the table after deleting an employee
         setEmployees(prevEmployees => prevEmployees.filter(employee => employee.id !== id));
